@@ -1,28 +1,35 @@
 #!/usr/bin/python3
 
 import sys
-import requests
 import time
+import requests
 from multiprocessing.dummy import Pool
 from urllib3.exceptions import InsecureRequestWarning
 
 session = requests.Session()
 session.verify = False
 
-
 # Suppress only the single warning from urllib3 needed.
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+
+def print_header():
+    print('| url'.ljust(len(sys.argv[1])), '|\t','method', '|\t', 'status', '\t', 'response_time')
+    print('-----------------------------------------------------------------------')
+
+def print_footer():
+    print('-----------------------------------------------------------------------')
 
 def print_response(response):
     url = response.url
     status = response.status_code
     elapsed_time = response.elapsed.total_seconds()
-    print(url, '\t', status, '\t\t', elapsed_time)
+    print('|', url, '|\t|','GET', '|\t\t|',  status, '|\t\t|', elapsed_time, '|')
 
 def print_responses(responses):
-    print('method'.ljust(len(sys.argv[1])), '\t\t', 'status', '\t', 'response_time')
+    print_header()
     for response in responses:
        print_response(response) 
+    print_footer()
 
 def make_requests(number_of_threads):
     with Pool(number_of_threads) as pool:
